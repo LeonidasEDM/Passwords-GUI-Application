@@ -24,18 +24,16 @@ int main() {
 
 void drawWindow(sf::RenderWindow* window, Menu* menu) {
 	window->clear(sf::Color(32,17,65,255));
-	menu->initObjects();
-	
-		//window->draw(menu->drawObject());
-	
+	menu->initObjects(); //Initialize Objects in Menu
+	menu->drawObjects(window); //Draw Objects in the Window
 	window->display();
 }
 
 void updateWindow(sf::RenderWindow* window) {
-	while (window->pollEvent(evt)) {
+	while (window->pollEvent(evt)) { //Event Identifier
 		switch (evt.type)
 		{
-		case sf::Event::Closed:
+		case sf::Event::Closed: //Close Window Even
 			window->close();
 			break;
 		}
