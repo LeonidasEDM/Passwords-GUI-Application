@@ -2,9 +2,8 @@
 
 sf::Event evt;
 sf::RenderWindow* mainWindow;
-void updateWindow(sf::RenderWindow*);
-void updateButton(sf::RenderWindow*,Menu*);
-void drawWindow(sf::RenderWindow*);
+void updateWindow(sf::RenderWindow*,Menu*);
+void updateButton(int,sf::RenderWindow*,Menu*);
 void drawWindow(sf::RenderWindow*, Menu*);
 
 std::vector <sf::RenderWindow*> listOfWindows;
@@ -16,10 +15,9 @@ int main() {
 
 	drawWindow(mainWindow,menu); //Draw Initial Window
 
-	while (mainWindow->isOpen()) {
+	while (mainWindow->isOpen()) { //Update all windows(if there is more than one window)
 		for (sf::RenderWindow* window : listOfWindows) {
-			updateWindow(window);
-			updateButton(window, menu);
+			updateWindow(window,menu);
 		}
 	}
 }
@@ -31,25 +29,36 @@ void drawWindow(sf::RenderWindow* window, Menu* menu) {
 	window->display();
 }
 
-void updateWindow(sf::RenderWindow* window) {
+void updateWindow(sf::RenderWindow* window,Menu* menu) {
 	while (window->pollEvent(evt)) { //Event Identifier
 		switch (evt.type)
 		{
 		case sf::Event::Closed: //Close Window Even
 			window->close();
 			break;
-		case sf::Event::MouseButtonPressed:
 
+		case sf::Event::MouseButtonPressed:
+			for (int i = 0; i < menu->listOfBtns.size(); i++) {
+				if (menu->listOfBtns[i]->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y)) {
+					updateButton(i,window,menu);
+				}
+			}
 			break;
 		}
 	}
 }
 
-void updateButton(sf::RenderWindow* window,Menu* menu) {
-	for (sf::RectangleShape* btn : menu->listOfBtns) {
-		if (btn->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y)) {
-			std::cout << "Works";
-		}
+void updateButton(int btnNum, sf::RenderWindow* window,Menu* menu) {
+	Menu* temp = menu;
+	switch (btnNum)
+	{
+	case 0:
+		menu = new LoginMenu;
+		drawWindow(window,menu);
+		break;
+	case 1: 
+		menu = new NewAccountMenu;
+		drawWindow(window, menu);
 	}
 }
 

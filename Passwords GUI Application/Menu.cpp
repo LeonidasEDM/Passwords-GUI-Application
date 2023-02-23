@@ -33,7 +33,15 @@ void MainMenu::initObjects() {
 }
 
 void LoginMenu::initObjects() {
-
+	//Initialize Buttons
+	for (int i = 0; i < 2; i++) {
+		listOfBtns.emplace_back(new sf::RectangleShape);
+		listOfBtns[i]->setSize(sf::Vector2f(125, 50));
+		listOfBtns[i]->setPosition(btnPos_X[i], btnPos_Y[i]);
+		listOfBtns[i]->setFillColor(sf::Color::Black);
+		listOfBtns[i]->setOutlineThickness(2);
+		listOfBtns[i]->setOutlineColor(sf::Color::Cyan);
+	}
 }
 
 void NewAccountMenu::initObjects() {

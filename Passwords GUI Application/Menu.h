@@ -28,11 +28,17 @@ public:
 };
 
 class LoginMenu : public Menu {
+private:
+	int btnPos_X[2] = { 100,700 };
+	int btnPos_Y[2] = { 555,555 };
 public:
 	void initObjects();
 };
 
 class NewAccountMenu : public Menu {
+private:
+	int btnPos_X[2] = { 100,700 };
+	int btnPos_Y[2] = { 555,555 };
 public:
 	void initObjects();
 };
