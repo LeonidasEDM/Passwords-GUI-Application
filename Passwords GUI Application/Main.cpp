@@ -4,7 +4,6 @@ Menu* menu;
 sf::Event evt;
 sf::RenderWindow* mainWindow;
 void updateWindow(sf::RenderWindow*);
-void updateButton(int,sf::RenderWindow*);
 void drawWindow(sf::RenderWindow*);
 std::vector <sf::RenderWindow*> listOfWindows;
 
@@ -37,28 +36,43 @@ void updateWindow(sf::RenderWindow* window) {
 			break;
 
 		case sf::Event::MouseButtonPressed:
-			int i = 0;
-			for (sf::RectangleShape* btn : menu->listOfBtns) {
-				if (btn->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y)) {
-					updateButton(i,window);
+			for (int i = 0; i < menu->listOfBtns.size();i++) {
+				if (menu->listOfBtns.at(i)->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y)) {
+					menu->updateButtons(menu,window,i); //Update Buttons
+					drawWindow(window); //TEMPORARY DRAW
 				}
-				i++;
 			}
 			break;
 		}
 	}
 }
 
-void updateButton(int btnNum, sf::RenderWindow* window) {
-	switch (btnNum)
-	{
+void MainMenu::updateButtons(Menu*& currentMenu,sf::RenderWindow* window, int btn) {
+	delete currentMenu;
+	switch (btn) {
 	case 0:
-		menu = new LoginMenu;
-		drawWindow(window);
+		currentMenu = new LoginMenu;
 		break;
-	case 1: 
-		menu = new MainMenu;
-		drawWindow(window);
+	case 1:
+		currentMenu = new NewAccountMenu;
+		break;
 	}
 }
 
+void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+	delete currentMenu;
+	switch (btn) {
+	case 0:
+		currentMenu = new MainMenu;
+		break;
+	}
+}
+
+void NewAccountMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+	delete currentMenu;
+	switch (btn) {
+	case 0:
+		currentMenu = new MainMenu;
+		break;
+	}
+}
