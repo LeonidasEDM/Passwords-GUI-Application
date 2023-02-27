@@ -65,6 +65,9 @@ void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int 
 	case 0:
 		currentMenu = new MainMenu;
 		break;
+	case 1:
+		currentMenu = new MainMenu;
+		break;
 	}
 }
 
@@ -72,6 +75,9 @@ void NewAccountMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window,
 	delete currentMenu;
 	switch (btn) {
 	case 0:
+		currentMenu = new MainMenu;
+		break;
+	case 1:
 		currentMenu = new MainMenu;
 		break;
 	}
