@@ -6,6 +6,7 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 
+
 #define MAIN_MENU 0
 #define LOGIN_MENU 1	
 #define NEW_ACCOUNT_MENU 2
@@ -23,7 +24,6 @@ public:
 	std::vector <sf::RectangleShape*> listOfBtns;
 	std::vector <sf::Text*> listOfLabels;
 	std::vector <sf::RectangleShape*> listOfTextBoxes;
-
 };
 
 class MainMenu : public Menu {

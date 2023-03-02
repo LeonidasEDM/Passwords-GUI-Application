@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include "TextBox.h"
 
 Menu* menu;
 sf::Event evt;
@@ -28,8 +29,11 @@ void drawWindow(sf::RenderWindow* window) {
 }
 
 void updateWindow(sf::RenderWindow* window) {
-	bool update = false;
-	bool textBoxFocus = false;
+
+	static bool update = false; //Window Debugging bool to prevent interactions between different menus
+	static bool textBoxFocus = false;
+	static TextBox* activeTxtBox = nullptr;
+
 	while (window->pollEvent(evt)) { //Event Identifier
 		switch (evt.type)
 		{
@@ -47,28 +51,36 @@ void updateWindow(sf::RenderWindow* window) {
 					}
 				}
 			}
-			if (update == false) {
+			if (update == false) { //Textboxes
 				for (int i = 0; i < menu->listOfTextBoxes.size(); i++) {
 					if (menu->listOfTextBoxes.at(i)->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y)) {
-						update = true;
-						sf::RectangleShape* cursor = new sf::RectangleShape;
-						sf::Text* input = new sf::Text;
-						cursor->setPosition(sf::Mouse::getPosition(*window).x, menu->listOfTextBoxes.at(i)->getPosition().y + 4);
-						input->setPosition(cursor->getPosition().x, cursor->getPosition().y);
-						input->setCharacterSize(5);
-						cursor->setSize(sf::Vector2f(2.5, 38));
-						cursor->setFillColor(sf::Color::White);
-						window->clear(sf::Color(32, 17, 65, 255));
-						menu->drawObjects(window);
-						window->draw(*cursor);
-						window->display();
-						std::string lol;
 						textBoxFocus = true;
-					
+						update = true;
+						activeTxtBox = new TextBox;
+						activeTxtBox->initializeCursor(100,100,2.5,38,sf::Color::White,window,menu);
+					}
+					else if(update == false && textBoxFocus == true && !(menu->listOfTextBoxes.at(i)->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))){
+						textBoxFocus = false;
 					}
 				}
 			}
+
+
 			update = false;
+			break;
+
+		case sf::Event::KeyPressed:
+			
+			if (textBoxFocus == true) {
+				if (evt.key.shift) {
+					std::cout << "YES";
+				}
+				else {
+					std::cout << "NO";
+				}
+				activeTxtBox->inputText.append(std::to_string(evt.key.code));
+				activeTxtBox->typeInput(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y,window,menu);
+			}
 			break;
 		}
 	}
