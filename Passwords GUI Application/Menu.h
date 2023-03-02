@@ -23,6 +23,7 @@ public:
 	std::vector <sf::RectangleShape*> listOfBtns;
 	std::vector <sf::Text*> listOfLabels;
 	std::vector <sf::RectangleShape*> listOfTextBoxes;
+
 };
 
 class MainMenu : public Menu {
