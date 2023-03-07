@@ -11,6 +11,41 @@
 #define LOGIN_MENU 1	
 #define NEW_ACCOUNT_MENU 2
 
+class TextBox
+{
+private:
+	sf::Font font;
+public:
+	TextBox() {
+		std::cout << "created";
+		cursor = new sf::RectangleShape;
+	}
+
+	~TextBox(){
+		std::cout << "destroyed";
+	}
+
+	sf::RectangleShape* box;
+	sf::RectangleShape* cursor;
+	sf::Text* input = new sf::Text;
+	std::string inputText;
+
+	void initializeCursor(int x, int y, int length, int height, sf::Color fillColor) {
+		cursor->setPosition(x, y);
+		cursor->setSize(sf::Vector2f(length, height));
+		cursor->setFillColor(fillColor);
+	}
+	
+	void typeInput(int x, int y) {
+		font.loadFromFile("Res/Fonts/bankai.otf");
+		input->setPosition(x, y);
+		input->setCharacterSize(40);
+		input->setFillColor(sf::Color::White);
+		input->setFont(font);
+		input->setString(inputText);
+	}
+};
+
 class Menu
 {
 public:
@@ -23,7 +58,7 @@ public:
 	sf::Font bankaiFont;
 	std::vector <sf::RectangleShape*> listOfBtns;
 	std::vector <sf::Text*> listOfLabels;
-	std::vector <sf::RectangleShape*> listOfTextBoxes;
+	std::vector <TextBox*> listOfTextBoxes;
 };
 
 class MainMenu : public Menu {

@@ -8,9 +8,9 @@ void Menu::drawObjects(sf::RenderWindow* window) {
 	for (sf::Text* txt : this->listOfLabels) { //Draw Labels
 		window->draw(*txt);
 	}
-
-	for (sf::RectangleShape* txtBox : this->listOfTextBoxes) { //Draw Text Boxes
-		window->draw(*txtBox);
+	
+	for (TextBox* txtBox : this->listOfTextBoxes) { //Draw Text Boxes
+		window->draw(*txtBox->box);
 	}
 }
 
@@ -35,11 +35,13 @@ void Menu::initLabel(int x, int y, int charSize, std::string text, sf::Color fil
 }
 
 void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor) {
-	sf::RectangleShape* txtBox = new sf::RectangleShape;
-	txtBox->setSize(sf::Vector2f(length, height));
-	txtBox->setPosition(x, y);
-	txtBox->setFillColor(fillColor);
+	TextBox* txtBox = new TextBox;
+	txtBox->box = new sf::RectangleShape;
+	txtBox->box->setSize(sf::Vector2f(length, height));
+	txtBox->box->setPosition(x, y);
+	txtBox->box->setFillColor(fillColor);
 	listOfTextBoxes.emplace_back(txtBox);
+	
 }
 
 void MainMenu::initObjects() {
