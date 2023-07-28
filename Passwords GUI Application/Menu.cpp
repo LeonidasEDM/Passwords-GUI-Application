@@ -1,5 +1,10 @@
 #include "Menu.h"
 
+void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
+	TextBox* Box = new TextBox(length, height, x, y, fillColor, outlineThickness, outlineColor);
+	listOfTextBoxxes.emplace_back(Box);
+}
+
 void MainMenu::initObjects() {
 	//Initialize Buttons
 	initButton(225, 75, 345, 355, sf::Color::Black, 2, sf::Color::Cyan);
@@ -23,6 +28,9 @@ void LoginMenu::initObjects() {
 	initLabel(682, 562, 27, "Login", sf::Color::Cyan);
 	initLabel(265, 225, 30, "Username", sf::Color::Cyan);
 	initLabel(265, 330, 30, "Password", sf::Color::Cyan);
+
+	initTextBox(350, 35, 267, 272, sf::Color::Magenta, 2, sf::Color::Red);
+	initTextBox(350, 35, 267, 376, sf::Color::Magenta, 2, sf::Color::Red);
 }
 
 void Menu::drawWindow(sf::RenderWindow* window)
@@ -35,6 +43,10 @@ void Menu::drawWindow(sf::RenderWindow* window)
 
 	for (sf::Text* txt : this->listOfLabels) { //Draw Labels
 		window->draw(*txt);
+	}
+
+	for (int i = 0; i < listOfTextBoxxes.size(); i++) {
+		window->draw(listOfTextBoxxes.at(i)->txtBox);
 	}
 
 	window->display();
@@ -90,6 +102,5 @@ void Menu::initLabel(int x, int y, int charSize, std::string text, sf::Color fil
 	txt->setFont(bankaiFont);
 	listOfLabels.emplace_back(txt);
 }
-
 
 

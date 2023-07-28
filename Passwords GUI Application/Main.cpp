@@ -5,6 +5,7 @@ sf::Event evt;
 
 std::vector <sf::RenderWindow*> listOfWindows;
 
+
 int main() {
 	sf::RenderWindow* MainWindow = new sf::RenderWindow(sf::VideoMode(900, 700), "Manage Passwords Program", sf::Style::Titlebar | sf::Style::Close); //Create Main Window
 	listOfWindows.emplace_back(MainWindow); //Add Main Window to list
