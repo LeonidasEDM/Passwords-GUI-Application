@@ -1,10 +1,5 @@
 #include "Menu.h"
 
-void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
-	TextBox* Box = new TextBox(length, height, x, y, fillColor, outlineThickness, outlineColor);
-	listOfTextBoxxes.emplace_back(Box);
-}
-
 void MainMenu::initObjects() {
 	//Initialize Buttons
 	initButton(225, 75, 345, 355, sf::Color::Black, 2, sf::Color::Cyan);
@@ -29,8 +24,9 @@ void LoginMenu::initObjects() {
 	initLabel(265, 225, 30, "Username", sf::Color::Cyan);
 	initLabel(265, 330, 30, "Password", sf::Color::Cyan);
 
-	initTextBox(350, 35, 267, 272, sf::Color::Magenta, 2, sf::Color::Red);
-	initTextBox(350, 35, 267, 376, sf::Color::Magenta, 2, sf::Color::Red);
+	//Initialize TextBoxxes
+	initTextBox(350, 35, 267, 272, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255));
+	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255));
 }
 
 void Menu::drawWindow(sf::RenderWindow* window)
@@ -47,6 +43,7 @@ void Menu::drawWindow(sf::RenderWindow* window)
 
 	for (int i = 0; i < listOfTextBoxxes.size(); i++) {
 		window->draw(listOfTextBoxxes.at(i)->txtBox);
+		window->draw(listOfTextBoxxes.at(i)->text);
 	}
 
 	window->display();
@@ -103,4 +100,19 @@ void Menu::initLabel(int x, int y, int charSize, std::string text, sf::Color fil
 	listOfLabels.emplace_back(txt);
 }
 
+void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
+	
+	TextBox* Box = new TextBox;
+	Box->txtBox.setSize(sf::Vector2f(length, height));
+	Box->txtBox.setPosition(x, y);
+	Box->txtBox.setFillColor(fillColor);
+	Box->txtBox.setOutlineThickness(outlineThickness);
+	Box->txtBox.setOutlineColor(outlineColor);
+	listOfTextBoxxes.emplace_back(Box);
+
+	Box->text.setPosition(x+5, y-5);
+	Box->text.setFont(bankaiFont);
+	Box->text.setCharacterSize(35);
+	Box->text.setFillColor(sf::Color::White);
+}
 

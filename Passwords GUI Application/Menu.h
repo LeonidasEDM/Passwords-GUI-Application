@@ -7,17 +7,11 @@
 #include <iostream>
 
 
-class TextBox {
-public:
+struct TextBox {
 	sf::RectangleShape txtBox;
-	TextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
-		txtBox.setSize(sf::Vector2f(length, height));
-		txtBox.setPosition(x, y);
-		txtBox.setFillColor(fillColor);
-		txtBox.setOutlineThickness(outlineThickness);
-		txtBox.setOutlineColor(outlineColor);
-	}
-private:
+	std::string leftText;
+	std::string rightText;
+	sf::Text text;
 };
 
 class Menu {
