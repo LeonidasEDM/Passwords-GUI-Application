@@ -29,6 +29,20 @@ void LoginMenu::initObjects() {
 	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255));
 }
 
+void UserMenu::initObjects() {
+	//Initialize Buttons
+	initButton(75, 25, 100, 605, sf::Color::Black, 2, sf::Color::Cyan);
+
+	//Initialize TextLabels
+	bankaiFont.loadFromFile("Res/Fonts/bankai.otf");
+	initLabel(120, 605, 20, "Back", sf::Color::Cyan);
+
+	//Initialize TextBoxxes
+	for (int i = 1; i < 19; i++) {
+		initTextBox(550, 18, 40, 28*i, sf::Color(32, 17, 65, 255), 2, sf::Color(32, 17, 65, 255));
+	}
+}
+
 void Menu::drawWindow(sf::RenderWindow* window)
 {
 	window->clear(sf::Color(32, 17, 65, 255));
@@ -55,29 +69,53 @@ void MainMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int b
 	listOfBtns.clear();
 	listOfLabels.clear();
 	delete currentMenu;
-	std::cout << btn;
 	switch (btn) {
 	case 0:
 		currentMenu = new LoginMenu;
+		
 		break;
 	case 1:
 		currentMenu = new LoginMenu;
 		break;
 	}
+	currentMenu->initObjects();
 }
 
 void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
-	listOfBtns.clear();
-	listOfLabels.clear();
-	delete currentMenu;
-	
 	switch (btn) {
 	case 0:
+		listOfBtns.clear();
+		listOfLabels.clear();
+		delete currentMenu;
 		currentMenu = new MainMenu;
+		currentMenu->initObjects();
 		break;
 	case 1:
-		currentMenu = new MainMenu;
+		switch (login())
+		{
+		case true:
+			listOfBtns.clear();
+			listOfLabels.clear();
+			listOfTextBoxxes.clear();
+			delete currentMenu;
+			currentMenu = new UserMenu;
+			currentMenu->initObjects();
+		}
 		break;
+	}
+}
+
+void UserMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+	switch (btn) {
+	case 0:
+		listOfBtns.clear();
+		listOfLabels.clear();
+		listOfTextBoxxes.clear();
+		delete currentMenu;
+		currentMenu = new MainMenu;
+		currentMenu->initObjects();
+		break;
+
 	}
 }
 
@@ -111,9 +149,9 @@ void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor
 	Box->txtBox.setOutlineColor(outlineColor);
 	listOfTextBoxxes.emplace_back(Box);
 
-	Box->text.setPosition(x+5, y-5);
+	Box->text.setPosition(x+3, y-(height/7));
 	Box->text.setFont(bankaiFont);
-	Box->text.setCharacterSize(35);
+	Box->text.setCharacterSize(height);
 	Box->text.setFillColor(sf::Color::White);
 
 	Box->cursor.setSize(sf::Vector2f(3, height));
@@ -121,3 +159,42 @@ void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor
 	Box->cursor.setFillColor(sf::Color(255,255,255,0));
 }
 
+bool LoginMenu::login() {
+
+	std::string userName = listOfTextBoxxes.at(0)->text.getString();
+	std::string password = listOfTextBoxxes.at(1)->text.getString();
+
+	readFile = new std::ifstream; //Create Read Access for a file
+	
+		readFile->open(userName + ".txt"); //Attempt to open file
+		
+			if (readFile->is_open()) { //If the file exists, File is Open
+				std::cout << "Open";
+				std::string output;
+				std::getline(*readFile, output);
+				if (password == output) {
+					return true;
+				}
+				readFile->close();
+			}
+			else { //If file does not exist, try input again
+				std::cout << "Don't exist";
+			}
+			
+}
+
+void LoginMenu::enterButtonPressed(Menu*& currentMenu) {
+	switch (login())
+	{
+	case true:
+		listOfBtns.clear();
+		listOfLabels.clear();
+		delete currentMenu;
+		currentMenu = new UserMenu;
+		currentMenu->initObjects();
+	}
+}
+
+void UserMenu::enterButtonPressed(Menu*& currentMenu) {
+
+}

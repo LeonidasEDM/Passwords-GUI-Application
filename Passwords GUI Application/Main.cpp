@@ -5,7 +5,7 @@ std::string smallChar(int);
 
 Menu* menu; 
 sf::Event evt;
-
+bool Menu::validInput = true;
 std::vector <sf::RenderWindow*> listOfWindows;
 
 
@@ -38,38 +38,40 @@ int main() {
 						if (update == false) { //button update T/F
 							for (int j = 0; j < menu->listOfBtns.size(); j++) {
 								if (menu->listOfBtns.at(j)->getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
-									update = true;
-									menu->updateButtons(menu, MainWindow, j); //Update Buttons
-									menu->initObjects();
+										update = true;
+										menu->updateButtons(menu, MainWindow, j); //Update Buttons
 								}
 							}
 						}
 
-					if (update == false) { //TextBox update T/F
+					 
 						for (int j = 0; j < menu->listOfTextBoxxes.size(); j++) {
-							if (menu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
-								activeTextBox = menu->listOfTextBoxxes.at(j);
-								menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255,255,255,255));
-;								update = true;
-							}
-							else {
-								menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+							menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+							if (update == false) { //TextBox update T/F
+								if (menu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
+									activeTextBox = menu->listOfTextBoxxes.at(j);
+									menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 255));
+									;								update = true;
+								}
+								else {
+									menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+								}
 							}
 						}
-					}
-
-					menu->drawWindow(MainWindow);
+					
+						menu->drawWindow(MainWindow);
+					
 					update = false;
 					break;
 
 				case sf::Event::KeyPressed:
-					
+
 					std::string* tempString = nullptr;
 					if (activeTextBox != nullptr) {
 						if (evt.key.code != -1 && !(36 <= evt.key.code && evt.key.code <= 45 || 58 <= evt.key.code && evt.key.code <= 66 || 71 <= evt.key.code && evt.key.code <= 74) && evt.key.code < 84) { //Debugs certain keys not in use
 
 							//Determines how far text can go in the text box
-							if (activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize()).x < activeTextBox->txtBox.getPosition().x + 340) { 
+							if (activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize()).x < (activeTextBox->txtBox.getSize().x + activeTextBox->txtBox.getPosition().x - 10)) {
 								activeTextBox->leftText = activeTextBox->leftText + getKeyCode(evt.key.code);
 							}
 						}
@@ -80,10 +82,35 @@ int main() {
 								if (!activeTextBox->leftText.empty()) { //Backspace Limit
 									activeTextBox->leftText.pop_back();
 								}
+								if (evt.key.control) {
+									while(!activeTextBox->leftText.empty()) {
+										if (activeTextBox->leftText.at(activeTextBox->leftText.size() - 1) == ' ') {
+											break;
+										}
+											activeTextBox->leftText.pop_back();
+									}
+								}
+								break;
+							case 60: //Tab Key
+								if (activeTextBox != nullptr) {
+									activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+								}
+								for (int i = 0; i < menu->listOfTextBoxxes.size(); i++) {
+									if (menu->listOfTextBoxxes.at(i) == activeTextBox) {
+										if (i != menu->listOfTextBoxxes.size()- 1) {
+											activeTextBox = menu->listOfTextBoxxes.at(i + 1);
+											activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 255));
+											break;
+										}
+										else {
+											activeTextBox = nullptr;
+										}
+									}
+								}
 								break;
 							case 71: //Left arrow key
 								if (!activeTextBox->leftText.empty()) { //Left Limit
-									activeTextBox->rightText = activeTextBox->leftText.at(activeTextBox->leftText.size() - 1) + activeTextBox->rightText; 
+									activeTextBox->rightText = activeTextBox->leftText.at(activeTextBox->leftText.size() - 1) + activeTextBox->rightText;
 									activeTextBox->leftText.pop_back();
 								}
 								break;
@@ -98,35 +125,48 @@ int main() {
 									}
 								}
 							}
-							
+
 						}
 
-						activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText); 
+						if (activeTextBox != nullptr) {
+							activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText);
 
-						//Left and right arrow key Logic
+							/*
+							int char_X = activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x;
+							int char_Y = activeTextBox->txtBox.getPosition().y;
+							int characterSize = activeTextBox->text.getCharacterSize();
+							*/
 
-						if (activeTextBox->leftText.empty()) {
-							activeTextBox->cursor.setPosition(activeTextBox->txtBox.getPosition());
-						}
-						else {
-							for (int i = 0; i < 30; i++) {
+							//Left and right arrow key Logic
+							if (activeTextBox->leftText.empty()) { //if textbox is empty
+								activeTextBox->cursor.setPosition(activeTextBox->txtBox.getPosition());
+							}
+							else {
 								if (!activeTextBox->rightText.empty()) { //determined if the cursor is positioned between a letter or not
 									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->leftText.size()).x, activeTextBox->txtBox.getPosition().y));
 								}
-								else if (!activeTextBox->text.getString().substring(activeTextBox->leftText.size() - 1, activeTextBox->leftText.size()).find((smallChar(i)))) { //determined if letter is smaller than normal
-									
-									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + 10, activeTextBox->txtBox.getPosition().y));
-									std::cout << activeTextBox->cursor.getPosition().x;
-									break;
-								}
-								else { //if letter is a bigger size cursor is placed a little further back
-									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + 18, activeTextBox->txtBox.getPosition().y));
-									std::cout << activeTextBox->cursor.getPosition().x;
+								else {
+									for (int i = 0; i < 30; i++) {
+										if (!activeTextBox->text.getString().substring(activeTextBox->leftText.size() - 1, activeTextBox->leftText.size()).find((smallChar(i)))) { //determined if letter is smaller than normal
+
+											activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.2, activeTextBox->txtBox.getPosition().y));
+
+											break;
+										}
+										else if (i == 29) { //if letter is a bigger size, cursor is placed a little further back (i == 29 insures that the statment is only run once the loop iterates over the entire list of smallCharacters)
+											activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.5, activeTextBox->txtBox.getPosition().y));
+										}
+									}
 								}
 							}
+
+							if (evt.key.code == 58) { //Enter Key (Placed here by itself due to it's logic requiering the conclusion of input)
+								activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+								activeTextBox = nullptr;
+								menu->enterButtonPressed(menu);
+							}
 						}
-						
-						menu->drawWindow(MainWindow);
+							menu->drawWindow(MainWindow);
 					}
 					break;
 				}
