@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MENU_H
+#define MENU_H
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
@@ -6,9 +8,12 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 
+char getKeyCode(int);
+
 
 struct TextBox {
 	sf::RectangleShape txtBox;
+	sf::RectangleShape cursor;
 	std::string leftText;
 	std::string rightText;
 	sf::Text text;
@@ -40,6 +45,7 @@ public:
 	void updateButtons(Menu*&, sf::RenderWindow*, int);
 };
 
+#endif // !1
 
 
 

@@ -44,6 +44,7 @@ void Menu::drawWindow(sf::RenderWindow* window)
 	for (int i = 0; i < listOfTextBoxxes.size(); i++) {
 		window->draw(listOfTextBoxxes.at(i)->txtBox);
 		window->draw(listOfTextBoxxes.at(i)->text);
+		window->draw(listOfTextBoxxes.at(i)->cursor);
 	}
 
 	window->display();
@@ -114,5 +115,9 @@ void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor
 	Box->text.setFont(bankaiFont);
 	Box->text.setCharacterSize(35);
 	Box->text.setFillColor(sf::Color::White);
+
+	Box->cursor.setSize(sf::Vector2f(3, height));
+	Box->cursor.setPosition(x, y);
+	Box->cursor.setFillColor(sf::Color(255,255,255,0));
 }
 

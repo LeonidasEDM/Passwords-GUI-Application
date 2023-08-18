@@ -1,6 +1,7 @@
 #include "Menu.h"
 
 char getKeyCode(int);
+std::string smallChar(int);
 
 Menu* menu; 
 sf::Event evt;
@@ -40,7 +41,6 @@ int main() {
 									update = true;
 									menu->updateButtons(menu, MainWindow, j); //Update Buttons
 									menu->initObjects();
-									menu->drawWindow(MainWindow);
 								}
 							}
 						}
@@ -49,11 +49,16 @@ int main() {
 						for (int j = 0; j < menu->listOfTextBoxxes.size(); j++) {
 							if (menu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
 								activeTextBox = menu->listOfTextBoxxes.at(j);
-								
+								menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255,255,255,255));
 ;								update = true;
+							}
+							else {
+								menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
 							}
 						}
 					}
+
+					menu->drawWindow(MainWindow);
 					update = false;
 					break;
 
@@ -93,9 +98,34 @@ int main() {
 									}
 								}
 							}
+							
+						}
+
+						activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText); 
+
+						//Left and right arrow key Logic
+
+						if (activeTextBox->leftText.empty()) {
+							activeTextBox->cursor.setPosition(activeTextBox->txtBox.getPosition());
+						}
+						else {
+							for (int i = 0; i < 30; i++) {
+								if (!activeTextBox->rightText.empty()) { //determined if the cursor is positioned between a letter or not
+									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->leftText.size()).x, activeTextBox->txtBox.getPosition().y));
+								}
+								else if (!activeTextBox->text.getString().substring(activeTextBox->leftText.size() - 1, activeTextBox->leftText.size()).find((smallChar(i)))) { //determined if letter is smaller than normal
+									
+									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + 10, activeTextBox->txtBox.getPosition().y));
+									std::cout << activeTextBox->cursor.getPosition().x;
+									break;
+								}
+								else { //if letter is a bigger size cursor is placed a little further back
+									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + 18, activeTextBox->txtBox.getPosition().y));
+									std::cout << activeTextBox->cursor.getPosition().x;
+								}
+							}
 						}
 						
-						activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText);
 						menu->drawWindow(MainWindow);
 					}
 					break;
@@ -179,5 +209,10 @@ char getKeyCode(int key) {
 	if (display_Text) {
 		return output;
 	}
+}
+
+std::string smallChar(int i) {
+	std::string smallCharList[30] = { "f", "i", "j", "l", "t", "I", ")", "!", " ^ ", " * ", "(", "[", "]", ";", ",", ".", "\'", "/", "(\)", "`", "{", "}", ":", "\"", "?", "|", "~", "+", "_", " "};
+	return smallCharList[i];
 }
 
