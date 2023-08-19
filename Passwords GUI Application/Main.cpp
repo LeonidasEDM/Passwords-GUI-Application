@@ -5,7 +5,9 @@ std::string smallChar(int);
 
 Menu* menu; 
 sf::Event evt;
-bool Menu::validInput = true;
+
+bool Menu::userMenuOpen = false;
+bool Menu::fileUpdate = false;
 std::vector <sf::RenderWindow*> listOfWindows;
 
 
@@ -68,6 +70,11 @@ int main() {
 
 					std::string* tempString = nullptr;
 					if (activeTextBox != nullptr) {
+						menu->userMenuOpen ? std::cout << "OPEN" : std::cout << "Closed";
+						if (menu->userMenuOpen) {
+							menu->fileUpdate = true;
+						}
+
 						if (evt.key.code != -1 && !(36 <= evt.key.code && evt.key.code <= 45 || 58 <= evt.key.code && evt.key.code <= 66 || 71 <= evt.key.code && evt.key.code <= 74) && evt.key.code < 84) { //Debugs certain keys not in use
 
 							//Determines how far text can go in the text box

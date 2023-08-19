@@ -94,12 +94,7 @@ void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int 
 		switch (login())
 		{
 		case true:
-			listOfBtns.clear();
-			listOfLabels.clear();
-			listOfTextBoxxes.clear();
-			delete currentMenu;
-			currentMenu = new UserMenu;
-			currentMenu->initObjects();
+			openSavedFile(currentMenu);
 		}
 		break;
 	}
@@ -108,14 +103,19 @@ void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int 
 void UserMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
 	switch (btn) {
 	case 0:
-		listOfBtns.clear();
-		listOfLabels.clear();
-		listOfTextBoxxes.clear();
-		delete currentMenu;
-		currentMenu = new MainMenu;
-		currentMenu->initObjects();
-		break;
+		if (!currentMenu->fileUpdate) {
+			userMenuOpen = false;
+			listOfBtns.clear();
+			listOfLabels.clear();
+			listOfTextBoxxes.clear();
+			delete currentMenu;
+			currentMenu = new MainMenu;
+			currentMenu->initObjects();
+			break;
+		}
+		else {
 
+		}
 	}
 }
 
@@ -173,9 +173,9 @@ bool LoginMenu::login() {
 				std::string output;
 				std::getline(*readFile, output);
 				if (password == output) {
+					readFile->close();
 					return true;
 				}
-				readFile->close();
 			}
 			else { //If file does not exist, try input again
 				std::cout << "Don't exist";
@@ -187,14 +187,43 @@ void LoginMenu::enterButtonPressed(Menu*& currentMenu) {
 	switch (login())
 	{
 	case true:
-		listOfBtns.clear();
-		listOfLabels.clear();
-		delete currentMenu;
-		currentMenu = new UserMenu;
-		currentMenu->initObjects();
+		openSavedFile(currentMenu);
+		break;
 	}
+}
+
+void LoginMenu::openSavedFile(Menu*& currentMenu)
+{
+	std::string* temp = nullptr;
+	temp = new std::string; //holds name of file after clearing all lists
+	*temp = listOfTextBoxxes.at(0)->text.getString();
+	listOfBtns.clear();
+	listOfLabels.clear();
+	listOfTextBoxxes.clear();
+	delete currentMenu;
+	currentMenu = new UserMenu;
+	currentMenu->initObjects();
+	file = new File(*temp);
+	delete temp;
+	file->getLines(currentMenu);
+	userMenuOpen = true;
 }
 
 void UserMenu::enterButtonPressed(Menu*& currentMenu) {
 
 }
+
+void Menu::File::getLines(Menu*& currentMenu)
+{
+	savedFile->open(fileName);
+
+	std::getline(*savedFile, output); //Required Iteration (Security)
+
+	while (!savedFile->eof()) {
+		std::getline(*savedFile,output);
+		currentMenu->listOfTextBoxxes.at(lines)->text.setString(output);
+		lines++;
+	}
+	savedFile->close();
+}
+

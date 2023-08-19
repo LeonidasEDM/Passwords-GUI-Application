@@ -27,13 +27,33 @@ public:
 	void initButton(int, int, int, int, sf::Color, int, sf::Color);
 	void initLabel(int, int, int, std::string, sf::Color);
 	void initTextBox(int, int, int, int, sf::Color, int, sf::Color);
-	sf::Font bankaiFont;
+	void drawWindow(sf::RenderWindow*);
+	
 	std::vector <sf::RectangleShape*> listOfBtns;
 	std::vector <sf::Text*> listOfLabels;
 	std::vector <TextBox*> listOfTextBoxxes;
-	void drawWindow(sf::RenderWindow*);
-	static bool validInput;
+	
+	sf::Font bankaiFont;
 	std::ifstream* readFile;
+
+	static bool userMenuOpen;
+	static bool fileUpdate;
+
+	struct File {
+		std::fstream* savedFile;
+		std::string output;
+		std::string fileName;
+		int lines = 0;
+		
+		File(std::string userName){
+			std::cout << userName;
+			savedFile = new std::fstream;
+			fileName = userName + ".txt";
+		}
+		void getLines(Menu*&);
+	};
+
+	File* file;
 };
 
 
@@ -50,6 +70,7 @@ public:
 	void initObjects();
 	void updateButtons(Menu*&, sf::RenderWindow*, int);
 	bool login();
+	void openSavedFile(Menu*&);
 	void enterButtonPressed(Menu*& currentMenu);
 };
 class UserMenu : public Menu {
@@ -58,6 +79,7 @@ public:
 	void updateButtons(Menu*&, sf::RenderWindow*, int);
 	void enterButtonPressed(Menu*& currentMenu);
 };
+
 #endif // !1
 
 
