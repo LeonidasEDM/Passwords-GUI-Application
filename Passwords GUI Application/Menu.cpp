@@ -43,15 +43,21 @@ void UserMenu::initObjects() {
 	}
 }
 
+void Error::initObjects()
+{
+	
+}
+
+
 void Menu::drawWindow(sf::RenderWindow* window)
 {
 	window->clear(sf::Color(32, 17, 65, 255));
 
-	for (sf::RectangleShape* btn : this->listOfBtns) { //Draw Buttons
+	for (sf::RectangleShape* btn : listOfBtns) { //Draw Buttons
 		window->draw(*btn);
 	}
 
-	for (sf::Text* txt : this->listOfLabels) { //Draw Labels
+	for (sf::Text* txt : listOfLabels) { //Draw Labels
 		window->draw(*txt);
 	}
 
@@ -65,7 +71,7 @@ void Menu::drawWindow(sf::RenderWindow* window)
 
 }
 
-void MainMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+void MainMenu::updateButtons(Menu*& currentMenu, int btn) {
 	listOfBtns.clear();
 	listOfLabels.clear();
 	delete currentMenu;
@@ -81,7 +87,7 @@ void MainMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int b
 	currentMenu->initObjects();
 }
 
-void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+void LoginMenu::updateButtons(Menu*& currentMenu, int btn) {
 	switch (btn) {
 	case 0:
 		listOfBtns.clear();
@@ -100,10 +106,9 @@ void LoginMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int 
 	}
 }
 
-void UserMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int btn) {
+void UserMenu::updateButtons(Menu*& currentMenu, int btn) {
 	switch (btn) {
 	case 0:
-		if (!currentMenu->fileUpdate) {
 			userMenuOpen = false;
 			listOfBtns.clear();
 			listOfLabels.clear();
@@ -112,11 +117,15 @@ void UserMenu::updateButtons(Menu*& currentMenu, sf::RenderWindow* window, int b
 			currentMenu = new MainMenu;
 			currentMenu->initObjects();
 			break;
-		}
-		else {
-
-		}
 	}
+}
+
+void Error::updateButtons(Menu*& currentMenu, int btn)
+{
+	switch (btn) {
+	case 0:
+		std::cout << "A";
+		}
 }
 
 void Menu::initButton(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
@@ -192,6 +201,15 @@ void LoginMenu::enterButtonPressed(Menu*& currentMenu) {
 	}
 }
 
+void UserMenu::enterButtonPressed(Menu*& currentMenu) {
+
+}
+
+void Error::enterButtonPressed(Menu*& currentMenu)
+{
+
+}
+
 void LoginMenu::openSavedFile(Menu*& currentMenu)
 {
 	std::string* temp = nullptr;
@@ -209,10 +227,6 @@ void LoginMenu::openSavedFile(Menu*& currentMenu)
 	userMenuOpen = true;
 }
 
-void UserMenu::enterButtonPressed(Menu*& currentMenu) {
-
-}
-
 void Menu::File::getLines(Menu*& currentMenu)
 {
 	savedFile->open(fileName);
@@ -226,4 +240,5 @@ void Menu::File::getLines(Menu*& currentMenu)
 	}
 	savedFile->close();
 }
+
 

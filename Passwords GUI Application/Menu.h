@@ -22,7 +22,7 @@ struct TextBox {
 class Menu {
 public:
 	virtual void initObjects() = 0;
-	virtual void updateButtons(Menu*&, sf::RenderWindow*, int) = 0;
+	virtual void updateButtons(Menu*&, int) = 0;
 	virtual void enterButtonPressed(Menu*& currentMenu) = 0;
 	void initButton(int, int, int, int, sf::Color, int, sf::Color);
 	void initLabel(int, int, int, std::string, sf::Color);
@@ -61,14 +61,14 @@ public:
 class MainMenu : public Menu {
 public:
 	void initObjects();
-	void updateButtons(Menu*&, sf::RenderWindow*, int);
+	void updateButtons(Menu*&, int);
 	void enterButtonPressed(Menu*& currentMenu) {} //for the sake of haveing virutal function, this function does nothing
 };
 
 class LoginMenu : public Menu {
 public:
 	void initObjects();
-	void updateButtons(Menu*&, sf::RenderWindow*, int);
+	void updateButtons(Menu*&, int);
 	bool login();
 	void openSavedFile(Menu*&);
 	void enterButtonPressed(Menu*& currentMenu);
@@ -76,7 +76,13 @@ public:
 class UserMenu : public Menu {
 public:
 	void initObjects();
-	void updateButtons(Menu*&, sf::RenderWindow*, int);
+	void updateButtons(Menu*&, int);
+	void enterButtonPressed(Menu*& currentMenu);
+};
+class Error : public  Menu {
+public:
+	void initObjects();
+	void updateButtons(Menu*&, int);
 	void enterButtonPressed(Menu*& currentMenu);
 };
 

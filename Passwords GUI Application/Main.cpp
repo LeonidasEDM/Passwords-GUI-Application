@@ -2,14 +2,18 @@
 
 char getKeyCode(int);
 std::string smallChar(int);
-
-Menu* menu; 
 sf::Event evt;
 
 bool Menu::userMenuOpen = false;
 bool Menu::fileUpdate = false;
-std::vector <sf::RenderWindow*> listOfWindows;
 
+void initErrorInterface();
+
+struct Interface { //Each Graphic Interface that holds a window and a menu
+	sf::RenderWindow* window;
+	Menu* menu;
+};
+std::vector <Interface*> listOfInterfaces; //overall list of interfaces use for iteration
 
 int main() {
 
@@ -17,62 +21,80 @@ int main() {
 	static bool update = false; //MAIN DEBUGGER (Bool debugs interactions between menus and insures a single update at a time)
 	bool windowClosed = false; //Debugging Variable
 
-	sf::RenderWindow* MainWindow = new sf::RenderWindow(sf::VideoMode(900, 700), "Manage Passwords Program", sf::Style::Titlebar | sf::Style::Close); //Create Main Window
-	listOfWindows.emplace_back(MainWindow); //Add Main Window to list
+	Interface* mainInterface;
+	mainInterface = new Interface;
+	listOfInterfaces.emplace_back(mainInterface); //Add Main Window to list
+	mainInterface->window = new sf::RenderWindow(sf::VideoMode(900, 700), "Manage Passwords Program", sf::Style::Titlebar | sf::Style::Close); //Create Main Window
+	
 
-	menu = new MainMenu;
-	menu->initObjects();
-	menu->drawWindow(MainWindow);
+	mainInterface->menu = new MainMenu;
+	mainInterface->menu->initObjects();
+	mainInterface->menu->drawWindow(mainInterface->window);
 
-	while (!listOfWindows.empty() && MainWindow->isOpen()) {
-		for (int i = 0; i < listOfWindows.size(); i++) {
-			while (listOfWindows.at(i)->pollEvent(evt)) { //Event Identifier
+	while (!listOfInterfaces.empty() && mainInterface->window->isOpen()) {
+		for (int i = 0; i < listOfInterfaces.size(); i++) {
+			Interface* activeInterface = listOfInterfaces.at(i);
+			sf::RenderWindow* activeWindow = activeInterface->window;
+			Menu*& activeMenu = activeInterface->menu;
+			while (activeInterface->window->pollEvent(evt)) { //Event Identifier
 				switch (evt.type)
 				{
 				case sf::Event::Closed: //Close Window Even
 					windowClosed = true;
-					listOfWindows.at(i)->close();
-					listOfWindows.erase(listOfWindows.begin() + i);
+					activeInterface->window->close();
+					listOfInterfaces.erase(listOfInterfaces.begin() + i);
 					break;
 
 				case sf::Event::MouseButtonPressed:
-					activeTextBox = nullptr;
+					if (activeWindow == listOfInterfaces.at(0)->window) {
+						activeTextBox = nullptr;
 						if (update == false) { //button update T/F
-							for (int j = 0; j < menu->listOfBtns.size(); j++) {
-								if (menu->listOfBtns.at(j)->getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
-										update = true;
-										menu->updateButtons(menu, MainWindow, j); //Update Buttons
+							for (int j = 0; j < activeMenu->listOfBtns.size(); j++) {
+								if (activeMenu->listOfBtns.at(j)->getGlobalBounds().contains(sf::Mouse::getPosition(*activeWindow).x, sf::Mouse::getPosition(*activeWindow).y)) {
+									update = true;
+
+									if (!activeMenu->fileUpdate)
+										activeMenu->updateButtons(activeMenu, j); //Button Update Call
+									else {
+										if (listOfInterfaces.size() < 2) {
+											initErrorInterface(); //Logic only applicable if usermenu is manipulated
+										}
+									}
 								}
 							}
 						}
 
-					 
-						for (int j = 0; j < menu->listOfTextBoxxes.size(); j++) {
-							menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+
+						for (int j = 0; j < activeMenu->listOfTextBoxxes.size(); j++) {
+							activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
 							if (update == false) { //TextBox update T/F
-								if (menu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*MainWindow).x, sf::Mouse::getPosition(*MainWindow).y)) {
-									activeTextBox = menu->listOfTextBoxxes.at(j);
-									menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 255));
+								if (activeMenu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*activeWindow).x, sf::Mouse::getPosition(*activeWindow).y)) {
+									activeTextBox = activeMenu->listOfTextBoxxes.at(j);
+									activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 255));
 									;								update = true;
 								}
 								else {
-									menu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+									activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
 								}
 							}
 						}
-					
-						menu->drawWindow(MainWindow);
-					
-					update = false;
+
+						activeMenu->drawWindow(activeWindow);
+
+						update = false;
+					}
+					else {
+						listOfInterfaces.at(0)->window->requestFocus(); //If Error Windows is open, It will have main focus
+					}
 					break;
 
 				case sf::Event::KeyPressed:
 
 					std::string* tempString = nullptr;
 					if (activeTextBox != nullptr) {
-						menu->userMenuOpen ? std::cout << "OPEN" : std::cout << "Closed";
-						if (menu->userMenuOpen) {
-							menu->fileUpdate = true;
+						activeMenu->userMenuOpen ? std::cout << "OPEN" : std::cout << "Closed";
+						if (activeMenu->userMenuOpen) {
+							activeMenu->fileUpdate = true;
 						}
 
 						if (evt.key.code != -1 && !(36 <= evt.key.code && evt.key.code <= 45 || 58 <= evt.key.code && evt.key.code <= 66 || 71 <= evt.key.code && evt.key.code <= 74) && evt.key.code < 84) { //Debugs certain keys not in use
@@ -102,10 +124,10 @@ int main() {
 								if (activeTextBox != nullptr) {
 									activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 0));
 								}
-								for (int i = 0; i < menu->listOfTextBoxxes.size(); i++) {
-									if (menu->listOfTextBoxxes.at(i) == activeTextBox) {
-										if (i != menu->listOfTextBoxxes.size()- 1) {
-											activeTextBox = menu->listOfTextBoxxes.at(i + 1);
+								for (int i = 0; i < activeMenu->listOfTextBoxxes.size(); i++) {
+									if (activeMenu->listOfTextBoxxes.at(i) == activeTextBox) {
+										if (i != activeMenu->listOfTextBoxxes.size()- 1) {
+											activeTextBox = activeMenu->listOfTextBoxxes.at(i + 1);
 											activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 255));
 											break;
 										}
@@ -170,15 +192,15 @@ int main() {
 							if (evt.key.code == 58) { //Enter Key (Placed here by itself due to it's logic requiering the conclusion of input)
 								activeTextBox->cursor.setFillColor(sf::Color(255, 255, 255, 0));
 								activeTextBox = nullptr;
-								menu->enterButtonPressed(menu);
+								activeMenu->enterButtonPressed(activeMenu);
 							}
 						}
-							menu->drawWindow(MainWindow);
+						activeMenu->drawWindow(activeWindow);
 					}
 					break;
 				}
 
-				if (windowClosed || listOfWindows.empty()) { //Debug list of windows Vector
+				if (windowClosed || listOfInterfaces.empty()) { //Debug list of windows Vector
 					break;
 				}
 				
@@ -263,3 +285,12 @@ std::string smallChar(int i) {
 	return smallCharList[i];
 }
 
+void initErrorInterface() {
+		Interface* errorInterface;
+		errorInterface = new Interface;
+		listOfInterfaces.emplace(listOfInterfaces.begin(), errorInterface);
+		errorInterface->window = new sf::RenderWindow(sf::VideoMode(480, 220), "Error", sf::Style::Titlebar | sf::Style::Close);
+		errorInterface->menu = new Error;
+		errorInterface->menu->initObjects();
+		errorInterface->menu->drawWindow(errorInterface->window);
+}
