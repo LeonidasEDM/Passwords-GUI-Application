@@ -1,7 +1,21 @@
 quito123
-amigo hola
-batman
-superman
-lionman
-hero
-Avenger
+Application in Progress:
+Capable of holding Information with no Encryption (Yet)
+
+Test Ex:
+Passwd 1
+Passwd 2
+Passwd 3
+Passwd 4
+Passwd 5
+
+
+
+
+
+
+
+
+
+
+end of file

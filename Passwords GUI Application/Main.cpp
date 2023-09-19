@@ -52,12 +52,21 @@ int main() {
 							for (int j = 0; j < activeMenu->listOfBtns.size(); j++) {
 								if (activeMenu->listOfBtns.at(j)->getGlobalBounds().contains(sf::Mouse::getPosition(*activeWindow).x, sf::Mouse::getPosition(*activeWindow).y)) {
 									update = true;
-
-									if (!activeMenu->fileUpdate)
-										activeMenu->updateButtons(activeMenu, j); //Button Update Call
+									if (!activeMenu->fileUpdate) {
+											activeMenu->updateButtons(activeMenu, j); //Button Update Call
+									}
 									else {
-										if (listOfInterfaces.size() < 2) {
-											initErrorInterface(); //Logic only applicable if usermenu is manipulated
+										if (listOfInterfaces.size() < 2 && activeMenu->listOfBtns.at(j) == activeMenu->listOfBtns.at(0)) {
+											initErrorInterface(); //Logic only applicable if usermenu is manipulated										
+										}
+										else if (activeInterface != mainInterface) {
+											activeMenu->updateButtons(mainInterface->menu, j);
+											activeInterface->window->close();
+											listOfInterfaces.erase(listOfInterfaces.begin() + i);
+											mainInterface->menu->drawWindow(mainInterface->window);
+										}
+										else {
+											activeMenu->updateButtons(mainInterface->menu, j);
 										}
 									}
 								}
@@ -70,11 +79,15 @@ int main() {
 							if (update == false) { //TextBox update T/F
 								if (activeMenu->listOfTextBoxxes.at(j)->txtBox.getGlobalBounds().contains(sf::Mouse::getPosition(*activeWindow).x, sf::Mouse::getPosition(*activeWindow).y)) {
 									activeTextBox = activeMenu->listOfTextBoxxes.at(j);
+
+									//Ensures cursor always goes toward the end of a text and is visible
 									activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 255));
-									;								update = true;
+									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->leftText.size()).x, activeTextBox->txtBox.getPosition().y)); 
+									update = true;
 								}
 								else {
 									activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
+
 								}
 							}
 						}
@@ -92,7 +105,6 @@ int main() {
 
 					std::string* tempString = nullptr;
 					if (activeTextBox != nullptr) {
-						activeMenu->userMenuOpen ? std::cout << "OPEN" : std::cout << "Closed";
 						if (activeMenu->userMenuOpen) {
 							activeMenu->fileUpdate = true;
 						}
@@ -289,7 +301,7 @@ void initErrorInterface() {
 		Interface* errorInterface;
 		errorInterface = new Interface;
 		listOfInterfaces.emplace(listOfInterfaces.begin(), errorInterface);
-		errorInterface->window = new sf::RenderWindow(sf::VideoMode(480, 220), "Error", sf::Style::Titlebar | sf::Style::Close);
+		errorInterface->window = new sf::RenderWindow(sf::VideoMode(480, 200), "Error", sf::Style::Titlebar | sf::Style::Close );
 		errorInterface->menu = new Error;
 		errorInterface->menu->initObjects();
 		errorInterface->menu->drawWindow(errorInterface->window);

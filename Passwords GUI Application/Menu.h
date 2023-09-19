@@ -19,6 +19,8 @@ struct TextBox {
 	sf::Text text;
 };
 
+
+
 class Menu {
 public:
 	virtual void initObjects() = 0;
@@ -28,7 +30,8 @@ public:
 	void initLabel(int, int, int, std::string, sf::Color);
 	void initTextBox(int, int, int, int, sf::Color, int, sf::Color);
 	void drawWindow(sf::RenderWindow*);
-	
+	void saveChanges(Menu*& menu);
+
 	std::vector <sf::RectangleShape*> listOfBtns;
 	std::vector <sf::Text*> listOfLabels;
 	std::vector <TextBox*> listOfTextBoxxes;
@@ -39,21 +42,6 @@ public:
 	static bool userMenuOpen;
 	static bool fileUpdate;
 
-	struct File {
-		std::fstream* savedFile;
-		std::string output;
-		std::string fileName;
-		int lines = 0;
-		
-		File(std::string userName){
-			std::cout << userName;
-			savedFile = new std::fstream;
-			fileName = userName + ".txt";
-		}
-		void getLines(Menu*&);
-	};
-
-	File* file;
 };
 
 
@@ -70,7 +58,6 @@ public:
 	void initObjects();
 	void updateButtons(Menu*&, int);
 	bool login();
-	void openSavedFile(Menu*&);
 	void enterButtonPressed(Menu*& currentMenu);
 };
 class UserMenu : public Menu {
@@ -78,12 +65,33 @@ public:
 	void initObjects();
 	void updateButtons(Menu*&, int);
 	void enterButtonPressed(Menu*& currentMenu);
+
 };
 class Error : public  Menu {
 public:
 	void initObjects();
 	void updateButtons(Menu*&, int);
 	void enterButtonPressed(Menu*& currentMenu);
+
+};
+
+
+
+struct File {
+	std::fstream* savedFile;
+	std::ifstream* readFile;
+	std::ofstream* writeFile;
+	std::string fileName;
+	std::string* Pw = new std::string;
+	int lines = 0;
+
+	File(std::string userName) {
+		std::cout << userName;
+		savedFile = new std::fstream;
+		fileName = userName + ".txt";
+	}
+	void getLines(Menu*&);
+	void openSavedFile(Menu*&);
 };
 
 #endif // !1

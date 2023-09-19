@@ -1,5 +1,7 @@
 #include "Menu.h"
 
+File* file; //Object that hold file type while a file is open
+
 void MainMenu::initObjects() {
 	//Initialize Buttons
 	initButton(225, 75, 345, 355, sf::Color::Black, 2, sf::Color::Cyan);
@@ -32,20 +34,30 @@ void LoginMenu::initObjects() {
 void UserMenu::initObjects() {
 	//Initialize Buttons
 	initButton(75, 25, 100, 605, sf::Color::Black, 2, sf::Color::Cyan);
+	initButton(75, 25, 700, 605, sf::Color::Black, 2, sf::Color::Cyan);
 
 	//Initialize TextLabels
 	bankaiFont.loadFromFile("Res/Fonts/bankai.otf");
 	initLabel(120, 605, 20, "Back", sf::Color::Cyan);
+	initLabel(720, 605, 20, "Save", sf::Color::Cyan);
 
 	//Initialize TextBoxxes
-	for (int i = 1; i < 19; i++) {
+	for (int i = 1; i < 21; i++) {
 		initTextBox(550, 18, 40, 28*i, sf::Color(32, 17, 65, 255), 2, sf::Color(32, 17, 65, 255));
 	}
 }
 
 void Error::initObjects()
 {
-	
+	//Initialize Buttons
+	initButton(75, 25, 90, 135, sf::Color::Black, 2, sf::Color::Cyan);
+	initButton(75, 25, 290, 135, sf::Color::Black, 2, sf::Color::Cyan);
+
+	//Initialize TextLabels
+	bankaiFont.loadFromFile("Res/Fonts/bankai.otf");
+	initLabel(55, 50, 30, "Would You like to Save Changes?", sf::Color::Cyan);
+	initLabel(110, 135, 20, "No", sf::Color::Cyan);
+	initLabel(310, 135, 20, "Yes", sf::Color::Cyan);
 }
 
 
@@ -100,7 +112,7 @@ void LoginMenu::updateButtons(Menu*& currentMenu, int btn) {
 		switch (login())
 		{
 		case true:
-			openSavedFile(currentMenu);
+			file->openSavedFile(currentMenu);
 		}
 		break;
 	}
@@ -108,24 +120,39 @@ void LoginMenu::updateButtons(Menu*& currentMenu, int btn) {
 
 void UserMenu::updateButtons(Menu*& currentMenu, int btn) {
 	switch (btn) {
-	case 0:
-			userMenuOpen = false;
-			listOfBtns.clear();
-			listOfLabels.clear();
-			listOfTextBoxxes.clear();
-			delete currentMenu;
-			currentMenu = new MainMenu;
-			currentMenu->initObjects();
-			break;
+	case 1:
+		saveChanges(currentMenu);
 	}
+
+	userMenuOpen = false;
+	listOfBtns.clear();
+	listOfLabels.clear();
+	listOfTextBoxxes.clear();
+	delete currentMenu;
+	currentMenu = new MainMenu;
+	currentMenu->initObjects();
+
 }
 
 void Error::updateButtons(Menu*& currentMenu, int btn)
 {
 	switch (btn) {
 	case 0:
-		std::cout << "A";
+		fileUpdate = false;
+		break;
+	case 1:
+		fileUpdate = false;
+		saveChanges(currentMenu);
+		break;
 		}
+
+	userMenuOpen = false;
+	listOfBtns.clear();
+	listOfLabels.clear();
+	listOfTextBoxxes.clear();
+	delete currentMenu;
+	currentMenu = new MainMenu;
+	currentMenu->initObjects();
 }
 
 void Menu::initButton(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
@@ -196,7 +223,7 @@ void LoginMenu::enterButtonPressed(Menu*& currentMenu) {
 	switch (login())
 	{
 	case true:
-		openSavedFile(currentMenu);
+		file->openSavedFile(currentMenu);
 		break;
 	}
 }
@@ -210,35 +237,58 @@ void Error::enterButtonPressed(Menu*& currentMenu)
 
 }
 
-void LoginMenu::openSavedFile(Menu*& currentMenu)
+void File::openSavedFile(Menu*& currentMenu)
 {
 	std::string* temp = nullptr;
 	temp = new std::string; //holds name of file after clearing all lists
-	*temp = listOfTextBoxxes.at(0)->text.getString();
-	listOfBtns.clear();
-	listOfLabels.clear();
-	listOfTextBoxxes.clear();
+	*temp = currentMenu->listOfTextBoxxes.at(0)->text.getString();
+	currentMenu->listOfBtns.clear();
+	currentMenu->listOfLabels.clear();
+	currentMenu->listOfTextBoxxes.clear();
 	delete currentMenu;
 	currentMenu = new UserMenu;
 	currentMenu->initObjects();
 	file = new File(*temp);
 	delete temp;
 	file->getLines(currentMenu);
-	userMenuOpen = true;
+	currentMenu->userMenuOpen = true;
 }
 
-void Menu::File::getLines(Menu*& currentMenu)
-{
+void File::getLines(Menu*& currentMenu)
+{	
+	std::string output;
 	savedFile->open(fileName);
 
 	std::getline(*savedFile, output); //Required Iteration (Security)
 
 	while (!savedFile->eof()) {
 		std::getline(*savedFile,output);
-		currentMenu->listOfTextBoxxes.at(lines)->text.setString(output);
+		currentMenu->listOfTextBoxxes.at(lines)->leftText = output;
+		currentMenu->listOfTextBoxxes.at(lines)->text.setString(currentMenu->listOfTextBoxxes.at(lines)->leftText);
 		lines++;
 	}
 	savedFile->close();
 }
 
+void Menu::saveChanges(Menu*& menu) {
+		std::string text;
+		fileUpdate = false;
+		file->readFile = new std::ifstream;
+		file->writeFile = new std::ofstream;
 
+		file->readFile->open(file->fileName);
+		std::getline(*file->readFile, *file->Pw);
+		file->readFile->close();
+
+		file->writeFile->open(file->fileName);
+		file->writeFile->clear();
+		*file->writeFile << *file->Pw;
+
+		int count = 0;
+		while (count != menu->listOfTextBoxxes.size()) {
+			text = menu->listOfTextBoxxes.at(count)->text.getString();
+			*file->writeFile << "\n" << text;
+			count++;
+		}
+		file->writeFile->close();
+}
