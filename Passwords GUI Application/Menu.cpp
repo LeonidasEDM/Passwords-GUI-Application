@@ -27,8 +27,8 @@ void LoginMenu::initObjects() {
 	initLabel(265, 330, 30, "Password", sf::Color::Cyan);
 
 	//Initialize TextBoxxes
-	initTextBox(350, 35, 267, 272, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255));
-	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255));
+	initTextBox(350, 35, 267, 272, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255),false);
+	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255),true);
 }
 
 void UserMenu::initObjects() {
@@ -43,7 +43,7 @@ void UserMenu::initObjects() {
 
 	//Initialize TextBoxxes
 	for (int i = 1; i < 21; i++) {
-		initTextBox(550, 18, 40, 28*i, sf::Color(32, 17, 65, 255), 2, sf::Color(32, 17, 65, 255));
+		initTextBox(550, 18, 40, 28*i, sf::Color(32, 17, 65, 255), 2, sf::Color(32, 17, 65, 255),false);
 	}
 }
 
@@ -175,7 +175,7 @@ void Menu::initLabel(int x, int y, int charSize, std::string text, sf::Color fil
 	listOfLabels.emplace_back(txt);
 }
 
-void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor) {
+void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor, int outlineThickness, sf::Color outlineColor, bool pw) {
 	
 	TextBox* Box = new TextBox;
 	Box->txtBox.setSize(sf::Vector2f(length, height));
@@ -185,20 +185,22 @@ void Menu::initTextBox(int length, int height, int x, int y, sf::Color fillColor
 	Box->txtBox.setOutlineColor(outlineColor);
 	listOfTextBoxxes.emplace_back(Box);
 
-	Box->text.setPosition(x+3, y-(height/7));
+	Box->text.setPosition(!pw ? x : x+8, !pw ? y - (height / 7): y - (height / 7) - 2);
+	Box->text.setLetterSpacing(!pw ? 1 : 2);
 	Box->text.setFont(bankaiFont);
-	Box->text.setCharacterSize(height);
+	Box->text.setCharacterSize(!pw? height: height * 2);
 	Box->text.setFillColor(sf::Color::White);
 
 	Box->cursor.setSize(sf::Vector2f(3, height));
 	Box->cursor.setPosition(x, y);
 	Box->cursor.setFillColor(sf::Color(255,255,255,0));
+	Box->password = pw;
 }
 
 bool LoginMenu::login() {
 
-	std::string userName = listOfTextBoxxes.at(0)->text.getString();
-	std::string password = listOfTextBoxxes.at(1)->text.getString();
+	std::string userName = listOfTextBoxxes.at(0)->leftText + listOfTextBoxxes.at(0)->rightText;
+	std::string password = listOfTextBoxxes.at(1)->leftText + listOfTextBoxxes.at(1)->rightText;
 
 	readFile = new std::ifstream; //Create Read Access for a file
 	

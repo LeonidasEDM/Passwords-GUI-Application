@@ -87,7 +87,6 @@ int main() {
 								}
 								else {
 									activeMenu->listOfTextBoxxes.at(j)->cursor.setFillColor(sf::Color(255, 255, 255, 0));
-
 								}
 							}
 						}
@@ -170,8 +169,15 @@ int main() {
 						}
 
 						if (activeTextBox != nullptr) {
-							activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText);
-
+								activeTextBox->text.setString(activeTextBox->leftText + activeTextBox->rightText);
+								if (activeTextBox->password) {
+									std::string holdPW = "";
+									for (int i = 0; i < activeTextBox->text.getString().getSize(); i++) {
+										holdPW += "*";
+									}
+									activeTextBox->text.setString(holdPW);
+								}
+							
 							/*
 							int char_X = activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x;
 							int char_Y = activeTextBox->txtBox.getPosition().y;

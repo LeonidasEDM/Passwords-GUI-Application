@@ -17,6 +17,7 @@ struct TextBox {
 	std::string leftText;
 	std::string rightText;
 	sf::Text text;
+	bool password;
 };
 
 
@@ -28,7 +29,7 @@ public:
 	virtual void enterButtonPressed(Menu*& currentMenu) = 0;
 	void initButton(int, int, int, int, sf::Color, int, sf::Color);
 	void initLabel(int, int, int, std::string, sf::Color);
-	void initTextBox(int, int, int, int, sf::Color, int, sf::Color);
+	void initTextBox(int, int, int, int, sf::Color, int, sf::Color, bool);
 	void drawWindow(sf::RenderWindow*);
 	void saveChanges(Menu*& menu);
 

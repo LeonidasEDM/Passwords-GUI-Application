@@ -3,19 +3,19 @@ Application in Progress:
 Capable of holding Information with no Encryption (Yet)
 
 Test Ex:
-Passwd 1
-Passwd 2
-Passwd 3
-Passwd 4
-Passwd 5
-
-
-
-
-
-
-
-
-
-
+Passwd 1s
+Passwd 2d
+Passwd 3d
+Passwd 4d
+Passwd 5d
+d
+d
+d
+d
+d
+d
+d
+d
+d
+d
 end of file
