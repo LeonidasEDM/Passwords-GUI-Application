@@ -193,15 +193,21 @@ int main() {
 									activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->leftText.size()).x, activeTextBox->txtBox.getPosition().y));
 								}
 								else {
-									for (int i = 0; i < 30; i++) {
-										if (!activeTextBox->text.getString().substring(activeTextBox->leftText.size() - 1, activeTextBox->leftText.size()).find((smallChar(i)))) { //determined if letter is smaller than normal
+									for (int i = 0; i < 29; i++) {
+										if (!activeTextBox->password) {
+											if (!activeTextBox->text.getString().substring(activeTextBox->leftText.size() - 1, activeTextBox->leftText.size()).find((smallChar(i)))) { //determined if letter is smaller than normal
 
-											activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.2, activeTextBox->txtBox.getPosition().y));
+												activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.2, activeTextBox->txtBox.getPosition().y));
 
-											break;
+												break;
+											}
+											else if (i == 28) { //if letter is a bigger size, cursor is placed a little further back (i == 28 insures that the statment is only run once the loop iterates over the entire list of smallCharacters)
+												activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.5, activeTextBox->txtBox.getPosition().y));
+											}
 										}
-										else if (i == 29) { //if letter is a bigger size, cursor is placed a little further back (i == 29 insures that the statment is only run once the loop iterates over the entire list of smallCharacters)
-											activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.5, activeTextBox->txtBox.getPosition().y));
+										else {
+											//Cursor placement for Asterisc for Password
+											activeTextBox->cursor.setPosition(sf::Vector2f(activeTextBox->text.findCharacterPos(activeTextBox->text.getString().getSize() - 1).x + activeTextBox->text.getCharacterSize() * 0.2, activeTextBox->txtBox.getPosition().y));
 										}
 									}
 								}
@@ -299,7 +305,7 @@ char getKeyCode(int key) {
 }
 
 std::string smallChar(int i) {
-	std::string smallCharList[30] = { "f", "i", "j", "l", "t", "I", ")", "!", " ^ ", " * ", "(", "[", "]", ";", ",", ".", "\'", "/", "(\)", "`", "{", "}", ":", "\"", "?", "|", "~", "+", "_", " "};
+	std::string smallCharList[30] = { "f", "i", "j", "l", "t", "I", ")", "!", " ^ ", "(", "[", "]", ";", ",", ".", "\'", "/", "(\)", "`", "{", "}", ":", "\"", "?", "|", "~", "+", "_", " "};
 	return smallCharList[i];
 }
 

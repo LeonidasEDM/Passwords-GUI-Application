@@ -31,6 +31,25 @@ void LoginMenu::initObjects() {
 	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255),true);
 }
 
+void NewAccountMenu::initObjects() {
+	//Initialize Buttons
+	initButton(125, 50, 150, 555, sf::Color::Black, 2, sf::Color::Cyan);
+	initButton(125, 50, 650, 555, sf::Color::Black, 2, sf::Color::Cyan);
+
+	//Initialize TextLabels
+	bankaiFont.loadFromFile("Res/Fonts/bankai.otf");
+	initLabel(182, 562, 27, "Back", sf::Color::Cyan);
+	initLabel(682, 562, 27, "Create", sf::Color::Cyan);
+	initLabel(265, 225, 30, "New Username", sf::Color::Cyan);
+	initLabel(265, 330, 30, "Password", sf::Color::Cyan);
+	initLabel(265, 310, 16, "", sf::Color::Transparent);
+	initLabel(265, 415, 16, "", sf::Color::Transparent);
+
+	//Initialize TextBoxxes
+	initTextBox(350, 35, 267, 272, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255), false);
+	initTextBox(350, 35, 267, 376, sf::Color(62, 70, 84, 255), 2, sf::Color(62, 70, 84, 255), true);
+}
+
 void UserMenu::initObjects() {
 	//Initialize Buttons
 	initButton(75, 25, 100, 605, sf::Color::Black, 2, sf::Color::Cyan);
@@ -93,7 +112,7 @@ void MainMenu::updateButtons(Menu*& currentMenu, int btn) {
 		
 		break;
 	case 1:
-		currentMenu = new LoginMenu;
+		currentMenu = new NewAccountMenu;
 		break;
 	}
 	currentMenu->initObjects();
@@ -113,6 +132,58 @@ void LoginMenu::updateButtons(Menu*& currentMenu, int btn) {
 		{
 		case true:
 			file->openSavedFile(currentMenu);
+		}
+		break;
+	}
+}
+
+void NewAccountMenu::updateButtons(Menu*& currentMenu, int btn) {
+	switch (btn) {
+		listOfBtns.clear();
+		listOfLabels.clear();
+		delete currentMenu;
+	case 0:
+		currentMenu = new MainMenu;
+		currentMenu->initObjects();
+		break;
+	case 1:
+		
+		readFile = new std::ifstream; //Create Read Access for a file
+		newFile = new std::ofstream; //Create Write Access for a new file
+
+
+		std::string userName = listOfTextBoxxes.at(0)->leftText + listOfTextBoxxes.at(0)->rightText;
+		std::string password = listOfTextBoxxes.at(1)->leftText + listOfTextBoxxes.at(1)->rightText;
+		
+
+		readFile->open(userName + ".txt"); //Attempt to open file
+		if (readFile->is_open()) {
+			listOfLabels.at(4)->setFillColor(sf::Color::Red);
+			listOfLabels.at(4)->setString("Username already Exists!");
+			readFile->close();
+		}
+		else if (userName.size() < 4) {
+			listOfLabels.at(4)->setString("Username must have atleast 4 characters");
+			listOfLabels.at(4)->setFillColor(sf::Color::Red);
+		}
+		else {
+			listOfLabels.at(5)->setFillColor(sf::Color::Red);
+			if (password.size() < 8) {
+				listOfLabels.at(5)->setString("Password must have atleast 8 characters");
+			}
+			else {
+				newFile->open(userName + ".txt");
+				*newFile << password;
+				newFile->close();
+
+				listOfBtns.clear();
+				listOfLabels.clear();
+				delete currentMenu;
+
+				currentMenu = new MainMenu;
+				currentMenu->initObjects();
+				break;
+			}
 		}
 		break;
 	}
@@ -228,6 +299,10 @@ void LoginMenu::enterButtonPressed(Menu*& currentMenu) {
 		file->openSavedFile(currentMenu);
 		break;
 	}
+}
+
+void NewAccountMenu::enterButtonPressed(Menu*& currentMenu) {
+
 }
 
 void UserMenu::enterButtonPressed(Menu*& currentMenu) {

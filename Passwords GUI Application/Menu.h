@@ -39,6 +39,7 @@ public:
 	
 	sf::Font bankaiFont;
 	std::ifstream* readFile;
+	std::ofstream* newFile;
 
 	static bool userMenuOpen;
 	static bool fileUpdate;
@@ -66,7 +67,11 @@ public:
 	void initObjects();
 	void updateButtons(Menu*&, int);
 	void enterButtonPressed(Menu*& currentMenu);
-
+};
+class NewAccountMenu :public Menu {
+	void initObjects();
+	void updateButtons(Menu*&, int);
+	void enterButtonPressed(Menu*& currentMenu);
 };
 class Error : public  Menu {
 public:
