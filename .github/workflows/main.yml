@@ -1,0 +1,26 @@
+name: "Security Scorecards"
+
+on:
+  schedule:
+    # Run once a week on Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  scorecards:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3 # Ensure you specify the correct version, 'v3' is just an example.
+
+      - name: "OSSF Scorecard action"
+        uses: ossf/scorecard-action@v2.3.1
+        with:
+          # Token with read permissions to the repository
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Save the results in JSON format
+          results_file: scorecards-results.json
+          results_format: "json"
+          # Optional: Set to 'true' to publish the results
+          publish_results: "false"
