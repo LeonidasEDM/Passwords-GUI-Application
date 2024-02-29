@@ -1,1 +1,1 @@
-[![OpenSSF Scorecard](htt‌ps://api.securityscorecards.dev/projects/github.com/LeonidasEDM/Passwords-GUI-Application/badge)](htt‌ps://securityscorecards.dev/viewer/?uri=github.com/LeonidasEDM/Passwords-GUI-Application)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8479/badge)](https://www.bestpractices.dev/projects/8479)
