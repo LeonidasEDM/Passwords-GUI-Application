@@ -1,0 +1,19 @@
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0' # weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  scorecards:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2 # replace with the version you prefer
+    - name: Run OSSF Scorecard
+      uses: ossf/scorecard-action@v2.3.1 # replace with the version you prefer
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        results_file: scorecards-results.json
+        results_format: json
