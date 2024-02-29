@@ -8,14 +8,14 @@ on:
 jobs:
   scorecards:
     runs-on: ubuntu-latest
-    permissions:   # This is where you add the permissions
+    permissions:
       contents: read
-      pull-requests: read
+      actions: read  
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 
+        uses: actions/checkout@v4
       - name: Run OSSF Scorecard
-        uses: ossf/scorecard-action@v2.3.1 
+        uses: ossf/scorecard-action@v2.3.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           results_file: scorecards-results.json
